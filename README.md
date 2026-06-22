@@ -67,7 +67,8 @@ Você foca nos dados, o MedooJS foca na defesa. Toda entrada de dados passada pe
 ## Instalação Rápida
 
 ```bash
-npm install medoojs
+
+npm install @horayzen-developers/medoo-js
 
 ```
 
