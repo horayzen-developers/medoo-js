@@ -19,9 +19,13 @@ Esqueça queries gigantescas em formato de texto ou configurações complexas de
 
 ```javascript
 import { Medoo } from 'medoojs';
+import mysql from 'mysql2/promise';
+
+// Criar uma pool de conexão usando o driver
+const pool = mysql.createPool(config)
 
 // Inicialização direta com o tipo do seu banco
-const db = new Medoo({ type: 'mysql', exec: seuPoolDeConexao });
+const db = new Medoo({ type: 'mysql', exec: pool });
 
 // Buscar um único usuário
 const usuario = await db.get('users', '*', { id: 42 });
