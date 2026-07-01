@@ -1,0 +1,39 @@
+name: Publicar no NPM
+
+on:
+  push:
+    tags:
+      - 'v*' # Dispara o workflow sempre que você criar uma tag começando com "v" (ex: v1.0.0)
+
+permissions:
+  id-token: write # Essencial para autenticação segura (Provenance/OIDC) no NPM
+  contents: read  # Permite que o bot leia o código do seu repositório
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      # 1. Baixa o código do seu repositório para a máquina virtual do GitHub
+      - name: Checkout do código
+        uses: actions/checkout@v4
+
+      # 2. Configura o ambiente Node.js na máquina virtual
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24' # Versão estável atual do Node.js recomendada para ambiente LTS/Produção
+          registry-url: 'https://registry.npmjs.org'
+
+      # 3. Instala as dependências de forma limpa e rápida baseada no package-lock.json
+      - name: Instalar dependências
+        run: npm ci
+
+      # 4. Executa os seus testes automáticos de segurança (o security.test.js)
+      - name: Executar testes de segurança
+        run: npm test
+
+      # 5. Publica no NPM. Se o teste falhar no passo anterior, este passo é cancelado automaticamente.
+      - name: Publicar no Registro NPM
+        run: npm publish --provenance
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
