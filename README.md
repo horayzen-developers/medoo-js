@@ -49,7 +49,7 @@ await db.delete('sessions', { expirada: 1 });
 
 ---
 
-## Suporte à Múltiplos Bancos de Dados
+## Suporte para Múltiplos Bancos de Dados
 
 Não importa a infraestrutura. O MedooJS gera a sintaxe exata e segura para o motor escolhido de forma nativa:
 
