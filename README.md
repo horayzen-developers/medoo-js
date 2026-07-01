@@ -7,15 +7,15 @@
 
 ```
 
-O MedooJS é a forma mais simples, leve e limpa de interagir com bancos de dados em Node.js. Inspirado no aclamado Medoo do PHP, ele elimina a complexidade e o peso dos ORMs tradicionais, permitindo que você manipule dados usando apenas objetos JavaScript puros.
+O MedooJS é a forma mais simples, leve e limpa de interagir com bancos de dados em [Node.js](https://nodejs.org). Inspirado no aclamado [Medoo](https://medoo.in) do PHP, ele elimina a complexidade e o peso dos ORMs tradicionais, permitindo a manipulação de dados usando apenas objetos JavaScript puros.
 
-Desenvolvido para ser agnóstico e seguro por padrão, ele se conecta diretamente ao driver que você já usa, garantindo proteção total contra SQL Injection sem adicionar peso ao seu projeto.
+Desenvolvido para ser agnóstico e seguro por padrão, ele se conecta diretamente ao driver, garantindo proteção total contra SQL Injection sem adicionar peso ao projeto.
 
 ---
 
 ## Como Funciona?
 
-Esqueça queries gigantescas em formato de texto ou configurações complexas de modelos. O MedooJS reduz o seu código ao essencial:
+Esqueça queries gigantescas em formato de texto ou configurações complexas de modelos. O MedooJS reduz o código ao essencial:
 
 ```javascript
 import { Medoo } from 'medoojs';
@@ -49,9 +49,9 @@ await db.delete('sessions', { expirada: 1 });
 
 ---
 
-## Funciona com o seu Banco de Dados
+## Suporte à Múltiplos Bancos de Dados
 
-Não importa a sua infraestrutura. O MedooJS gera a sintaxe exata e segura para o motor escolhido de forma nativa:
+Não importa a infraestrutura. O MedooJS gera a sintaxe exata e segura para o motor escolhido de forma nativa:
 
 * MySQL e MariaDB
 * PostgreSQL
@@ -64,7 +64,7 @@ Não importa a sua infraestrutura. O MedooJS gera a sintaxe exata e segura para 
 
 ## Segurança Transparente
 
-Você foca nos dados, o MedooJS foca na defesa. Toda entrada de dados passada pelos objetos é convertida automaticamente em Prepared Statements nativos do seu banco. Além disso, os nomes de tabelas e colunas passam por uma camada automática de higienização contra invasores, anulando qualquer tentativa de SQL Injection de forma invisível e sem perda de performance.
+Toda entrada de dados passada pelos objetos é convertida automaticamente em Prepared Statements nativos doq banco. Além disso, os nomes de tabelas e colunas passam por uma camada automática de higienização contra invasores, anulando qualquer tentativa de SQL Injection de forma invisível e sem perda de performance.
 
 ---
 
@@ -80,4 +80,4 @@ npm install @horayzen-developers/medoo-js
 
 ## Licença 
 
-Este projeto está sob a licenca MIT.
+Este projeto está sob a licença [MIT](LICENSE).

@@ -10,8 +10,8 @@
     "LICENSE"
   ],
   "scripts": {
-    "test": "node tests/security.test.js",
-    "example": "node examples/instance_exec.js"
+    "tests": "node tests/security.test.js",
+    "examples": "node examples/instance_exec.js"
   },
   "keywords": [
     "database",
