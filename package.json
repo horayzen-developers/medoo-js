@@ -1,6 +1,6 @@
 {
   "name": "@horayzen-developers/medoo-js",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "A lightweight database library with smart engine inference and robust SQL injection prevention.",
   "main": "src/index.js",
   "type": "module",
