@@ -1,6 +1,6 @@
 {
   "name": "@horayzen-developers/medoo-js",
-  "version": "0.0.5",
+  "version": "1.0.0",
   "description": "A lightweight database library with smart engine inference and robust SQL injection prevention.",
   "main": "src/index.js",
   "type": "module",
@@ -23,7 +23,7 @@
   ],
   "author": "HORAYZEN Developers® <horayzen.developers@gmail.com>",
   "license": "MIT",
-	"homepage": "https://github.com/horayzen-developers/medoo-js#readme",
+  "homepage": "https://github.com/horayzen-developers/medoo-js#readme",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/horayzen-developers/medoo-js.git"
