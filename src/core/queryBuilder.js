@@ -1,6 +1,6 @@
 /**
- * Purpose: Secure Query Compilation Framework
- * Description: Assembles SQL blueprints safely using parameter placeholder generation matrices.
+ * Purpose: Secure Query Compilation Framework with LIKE and ORDER capabilities
+ * Description: Assembles SQL blueprints safely using parameter placeholder generation matrices and dialect compatibility constraints.
  */
 
 import { sanitizeIdentifier } from '../utils/helpers.js';
@@ -18,7 +18,9 @@ export function buildQueryState(dialect) {
   };
 }
 
-export function buildWhere(where, dialect) {
+// ... manter buildQueryState igual ...
+
+export function buildWhere(where, dialect, context = 'SELECT') {
   if (!where || typeof where !== 'object' || Object.keys(where).length === 0) {
     return { prefix: '', whereSuffix: '', querySuffix: '', params: [] };
   }
@@ -26,24 +28,48 @@ export function buildWhere(where, dialect) {
   const state = buildQueryState(dialect);
   const conditions = [];
   let limitVal = null;
+  let orderVal = null;
 
   for (const key of Object.keys(where)) {
-    if (key.toUpperCase() === 'LIMIT') {
+    const upperKey = key.toUpperCase();
+
+    if (upperKey === 'LIMIT') {
       limitVal = parseInt(where[key], 10);
       continue;
     }
 
-    const value = where[key];
-    // Rigid injection containment layer applied directly to target evaluating keys
-    const cleanKey = sanitizeIdentifier(key);
-    if (!cleanKey) continue;
+    if (upperKey === 'ORDER') {
+      if (context !== 'SELECT' && typeof dialect.supportsOrderInWrite === 'function' && !dialect.supportsOrderInWrite(context)) {
+        throw new Error(`MedooJS Support Error: ORDER BY clause inside ${context} operations is not supported by the current dialect '${dialect.type}'.`);
+      }
+      orderVal = where[key];
+      continue;
+    }
 
-    const escapedKey = dialect.escapeIdentifier(cleanKey);
+    const value = where[key];
+
+    // Tratamento de LIKE com suporte a tabelas relacionais (com ponto '.')
+    if (key.endsWith('[LIKE]')) {
+      const rawKey = key.replace('[LIKE]', '');
+      // Divide por ponto caso seja "tabela.coluna"
+      const escapedKey = rawKey.split('.').map(part => dialect.escapeIdentifier(sanitizeIdentifier(part))).join('.');
+      
+      const placeholder = state.addParam(value);
+      conditions.push(`${escapedKey} LIKE ${placeholder}`);
+      continue;
+    }
+
+    // Mapeamento padrão de igualdade com suporte a tabelas relacionais (com ponto '.')
+    const escapedKey = key.split('.').map(part => dialect.escapeIdentifier(sanitizeIdentifier(part))).join('.');
     const placeholder = state.addParam(value);
     conditions.push(`${escapedKey} = ${placeholder}`);
   }
 
   let baseWhereSql = conditions.length > 0 ? ` WHERE ${conditions.join(' AND ')}` : '';
+
+  if (orderVal) {
+    baseWhereSql += compileOrderClause(orderVal, dialect);
+  }
   
   if (limitVal !== null && !isNaN(limitVal)) {
     const limitResult = dialect.applyLimit(limitVal, baseWhereSql);
@@ -56,4 +82,31 @@ export function buildWhere(where, dialect) {
   }
 
   return { prefix: '', whereSuffix: baseWhereSql, querySuffix: '', params: state.params };
+}
+
+function compileOrderClause(orderOption, dialect) {
+  let sql = ' ORDER BY ';
+
+  const escapeColumn = (col) => {
+    return col.split('.').map(part => dialect.escapeIdentifier(sanitizeIdentifier(part))).join('.');
+  };
+
+  if (typeof orderOption === 'string') {
+    return sql + `${escapeColumn(orderOption)} ASC`;
+  }
+
+  if (Array.isArray(orderOption)) {
+    const segments = orderOption.map(col => `${escapeColumn(col)} ASC`);
+    return sql + segments.join(', ');
+  }
+
+  if (typeof orderOption === 'object') {
+    const segments = Object.entries(orderOption).map(([col, direction]) => {
+      const dir = direction.toUpperCase() === 'DESC' ? 'DESC' : 'ASC';
+      return `${escapeColumn(col)} ${dir}`;
+    });
+    return sql + segments.join(', ');
+  }
+
+  return '';
 }

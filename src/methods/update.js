@@ -20,7 +20,7 @@ export function compileUpdate(dialect, table, data, where = {}) {
     assignments.push(`${escapedKey} = ${placeholder}`);
   }
 
-  const { whereSuffix, params: whereParams } = buildWhere(where, dialect);
+  const { whereSuffix, params: whereParams } = buildWhere(where, dialect, 'UPDATE');
   const query = `UPDATE ${escapedTable} SET ${assignments.join(', ')}${whereSuffix};`;
 
   return { query, params: [...state.params, ...whereParams] };

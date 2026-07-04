@@ -22,5 +22,10 @@
     "sqlite"
   ],
   "author": "HORAYZEN Developers® <horayzen.developers@gmail.com>",
-  "license": "MIT"
+  "license": "MIT",
+	"homepage": "https://github.com/horayzen-developers/medoo-js#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/horayzen-developers/medoo-js.git"
+  }
 }

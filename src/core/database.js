@@ -82,13 +82,13 @@ export class Medoo {
     throw new Error(`MedooJS Error: The execution instance provided doesn't map standard signatures for dialect type: '${type}'.`);
   }
 
-  async select(table, columns, where) {
-    const payload = compileSelect(this.dialect, table, columns, where);
+  async select(table, ...args) {
+    const payload = compileSelect(this.dialect, table, ...args);
     return this.runtimeExecutor(payload.query, payload.params);
   }
 
-  async get(table, columns, where) {
-    const payload = compileGet(this.dialect, table, columns, where);
+  async get(table, ...args) {
+    const payload = compileGet(this.dialect, table, ...args);
     return this.runtimeExecutor(payload.query, payload.params);
   }
 

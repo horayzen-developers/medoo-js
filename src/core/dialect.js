@@ -70,4 +70,14 @@ export class Dialect {
     }
     return result;
   }
+
+	/**
+   * Evaluates if the active engine type structurally supports ORDER BY constraints during write actions.
+   * @param {string} context - The engine execution query type context (e.g., 'UPDATE', 'DELETE').
+   * @returns {boolean}
+   */
+  supportsOrderInWrite(context) {
+    // Apenas MySQL e MariaDB possuem suporte nativo direto a ORDER BY em comandos UPDATE e DELETE
+    return this.type === DIALECTS.MYSQL || this.type === DIALECTS.MARIADB;
+	}
 }

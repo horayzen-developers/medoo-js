@@ -16,8 +16,7 @@ export function sanitizeIdentifier(name) {
   
   const trimmed = name.trim();
   
-  // Expressão regular que detecta qualquer caractere perigoso:
-  // Pontos e vírgulas, quebras de linha, comentários (-- ou #), aspas (', ", `), barras ou espaços extras suspeitos.
+  // Expressão regular original mantida intacta — garante segurança total contra escapes e quebras
   const dangerousCharRegex = /[\0\n\r\b\t;`'"\\\]\[#\/\*]|\-\-/;
   
   if (dangerousCharRegex.test(trimmed)) {
@@ -28,6 +27,28 @@ export function sanitizeIdentifier(name) {
 }
 
 /**
+ * Helper interno para quebrar e escapar identificadores compostos por ponto (ex: posts.title)
+ */
+function escapeCompoundIdentifier(column, dialect) {
+  const cleanColumn = sanitizeIdentifier(column);
+  
+  // Suporte a Aliases do Medoo original: "tabela.coluna(alias)" -> "tabela"."coluna" AS "alias"
+  const aliasMatch = cleanColumn.match(/^(.+)\((.+)\)$/);
+  if (aliasMatch) {
+    const rawPath = aliasMatch[1];
+    const aliasName = sanitizeIdentifier(aliasMatch[2]);
+    const escapedPath = rawPath.split('.').map(part => dialect.escapeIdentifier(sanitizeIdentifier(part))).join('.');
+    return `${escapedPath} AS ${dialect.escapeIdentifier(aliasName)}`;
+  }
+
+  // Comportamento padrão relacional: "posts.title" -> `posts`.`title`
+  return cleanColumn
+    .split('.')
+    .map(part => dialect.escapeIdentifier(sanitizeIdentifier(part)))
+    .join('.');
+}
+
+/**
  * Normalizes lists of columns into clean escaped syntax blocks after strict validation.
  * @param {string|string[]} columns - Selected targets or wildcard asset.
  * @param {Object} dialect - Internal active dialect schema map helper.
@@ -35,16 +56,18 @@ export function sanitizeIdentifier(name) {
  */
 export function formatColumns(columns, dialect) {
   if (!columns || columns === '*') return '*';
+  
   if (typeof columns === 'string') {
-    const clean = sanitizeIdentifier(columns);
-    return clean ? dialect.escapeIdentifier(clean) : '*';
+    return escapeCompoundIdentifier(columns, dialect);
   }
+  
   if (Array.isArray(columns)) {
     return columns
-      .map(col => sanitizeIdentifier(col))
+      .map(col => col.trim())
       .filter(col => col.length > 0)
-      .map(col => dialect.escapeIdentifier(col))
+      .map(col => escapeCompoundIdentifier(col, dialect))
       .join(', ');
   }
+  
   return '*';
 }
