@@ -5,7 +5,7 @@
  */
 
 import assert from 'assert';
-import { Medoo } from '../src/index.js';
+import { Medoo } from '../src/main.js';
 
 async function runSecurityTests() {
   console.log('Beginning Security Isolation and Feature Checks...\n');

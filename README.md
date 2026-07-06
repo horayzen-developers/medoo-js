@@ -18,7 +18,7 @@ Desenvolvido para ser agnóstico e seguro por padrão, ele se conecta diretament
 Esqueça queries gigantescas em formato de texto ou configurações complexas de modelos. O MedooJS reduz o código ao essencial:
 
 ```javascript
-import { Medoo } from 'medoojs';
+import { Medoo } from '@horayzen-developers/medoo-js';
 import mysql from 'mysql2/promise';
 
 // Criar uma pool de conexão usando o driver
